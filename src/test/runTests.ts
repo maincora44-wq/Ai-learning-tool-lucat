@@ -1,3 +1,4 @@
+import { validateBackupPayload } from '../storage/backupValidation';
 import { canAssignMaturity, calculateQuizScore, calculateStudyStreak } from '../domain/mastery';
 import { runMonthEndAutomationSimulation, INITIAL_SYNTHETIC_CONTROLS } from '../domain/flowSimulator';
 import { QuizQuestion, EvidenceRecord, SessionLog } from '../domain/types';
@@ -148,7 +149,6 @@ console.log('✓ runMonthEndAutomationSimulation idempotency tests passed!');
 
 // 5. Test malformed backup rejection (must run before overwriting saved data)
 console.log('Test 5: validating import backups...');
-const { validateBackupPayload } = await import('../storage/backupValidation');
 const validBackup = {
   schemaVersion: '1.0',
   exportedAt: '2026-10-25T00:00:00.000Z',
