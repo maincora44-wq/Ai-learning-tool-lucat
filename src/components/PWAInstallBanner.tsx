@@ -15,7 +15,7 @@ export const PWAInstallBanner: React.FC = () => {
         <div className="flex items-center gap-2 min-w-0">
           <span className="flex-shrink-0 w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
           <span className="truncate">
-            <strong className="text-cyan-300">갤럭시 Z 폴드7 PWA 최적화:</strong> 오프라인 전체 화면 앱으로 설치 가능합니다.
+            <strong className="text-cyan-300">갤럭시 Z 폴드7 PWA 최적화:</strong> HTTPS 사이트에서 홈 화면 앱으로 설치할 수 있습니다.
           </span>
         </div>
 
@@ -49,7 +49,7 @@ export const PWAInstallBanner: React.FC = () => {
       {!isOnline && (
         <div className="bg-amber-500/20 border-b border-amber-500/40 px-4 py-1.5 text-xs text-amber-300 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-amber-400" />
-          <span>오프라인 모드 활성화 — 기기 내 번들링된 레슨, 퀴즈, 실습 랩이 정상 작동합니다.</span>
+          <span>오프라인 상태입니다. 캐시된 레슨과 실습은 사용 가능하지만 실시간 AI 코치는 사용할 수 없습니다.</span>
         </div>
       )}
 
