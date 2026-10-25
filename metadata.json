@@ -1,0 +1,6 @@
+{
+  "name": "AI Learning OS",
+  "description": "Learn ChatGPT and Microsoft 365 AI through an evidence-based progressive capability framework with interactive labs, quizzes, and simulations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

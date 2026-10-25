@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="cyan-emerald" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect width="504" height="504" x="4" y="4" rx="108" fill="none" stroke="#334155" stroke-width="4" stroke-opacity="0.4"/>
+  
+  <!-- Glowing central glyph -->
+  <g filter="url(#glow)">
+    <!-- Capability Ladder / Diamond OS Node Structure -->
+    <!-- Level 5: Systems (Outer ring) -->
+    <circle cx="256" cy="256" r="160" fill="none" stroke="#1e293b" stroke-width="4" stroke-dasharray="8 8"/>
+    <circle cx="256" cy="256" r="110" fill="none" stroke="#334155" stroke-width="6"/>
+
+    <!-- 5 Stage Nodes -->
+    <!-- Stage 1 Tools: bottom-left -->
+    <circle cx="160" cy="330" r="14" fill="#0ea5e9"/>
+    <!-- Stage 2 Workflows: top-left -->
+    <circle cx="170" cy="190" r="14" fill="#06b6d4"/>
+    <!-- Stage 3 Automation: center-top -->
+    <circle cx="256" cy="146" r="16" fill="#10b981"/>
+    <!-- Stage 4 Agents: top-right -->
+    <circle cx="342" cy="190" r="14" fill="#14b8a6"/>
+    <!-- Stage 5 Systems: bottom-right -->
+    <circle cx="352" cy="330" r="16" fill="#22c55e"/>
+
+    <!-- Interconnecting neural / workflow arcs -->
+    <path d="M160 330 L170 190 L256 146 L342 190 L352 330" fill="none" stroke="url(#cyan-emerald)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Central Kernel / AI Core -->
+    <polygon points="256,210 296,256 256,302 216,256" fill="url(#cyan-emerald)"/>
+    <circle cx="256" cy="256" r="10" fill="#ffffff"/>
+  </g>
+
+  <!-- Typography badge at bottom -->
+  <text x="256" y="415" font-family="system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="#f8fafc" text-anchor="middle" letter-spacing="4">LEARNING OS</text>
+  <text x="256" y="445" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#38bdf8" text-anchor="middle" letter-spacing="2">TOOLS → WORKFLOWS → AGENTS</text>
+</svg>
