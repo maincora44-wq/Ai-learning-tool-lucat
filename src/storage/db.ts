@@ -67,11 +67,12 @@ async function idbSet<T>(key: string, value: T): Promise<void> {
     const db = await openDatabase();
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction('store', 'readwrite');
-      const store = tx.objectStore('store');
-      const req = store.put(value, key);
-      req.onsuccess = () => resolve();
-      req.onerror = () => reject(req.error);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error || new Error('Storage transaction aborted'));
+      tx.objectStore('store').put(value, key);
     });
+    db.close();
   } catch {
     // Fallback to localStorage
     localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
@@ -187,10 +188,17 @@ export function exportSessionToMarkdown(session: SessionLog): string {
 export async function clearAllLocalData(): Promise<void> {
   try {
     const db = await openDatabase();
-    const tx = db.transaction('store', 'readwrite');
-    tx.objectStore('store').clear();
-  } catch {
-    // Ignore IDB errors
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction('store', 'readwrite');
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error || new Error('Reset transaction aborted'));
+      tx.objectStore('store').clear();
+    });
+    db.close();
+  } catch (error) {
+    // Do not claim a successful reset if an existing IndexedDB store could not be cleared.
+    if (typeof indexedDB !== 'undefined') throw error;
   }
   // Clear localStorage keys starting with prefix
   const keysToRemove: string[] = [];

@@ -384,7 +384,7 @@ Step 3 (정제기): 통과된 엄밀한 팩트만으로 최종 보고서를 재�
     setLoading(true);
 
     try {
-      const response = await fetch('/api/coach', {
+      const response = await fetch(`${import.meta.env.BASE_URL}api/coach`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -427,7 +427,7 @@ Step 3 (정제기): 통과된 엄밀한 팩트만으로 최종 보고서를 재�
           {
             role: 'assistant',
             content: fallbackReply,
-            source: 'AI 마스터 선생님 엔진 (오프라인 최적화)',
+            source: '오프라인 규칙형 학습 가이드 (AI 응답 아님)',
             timestamp: new Date().toLocaleTimeString(),
           },
         ]);
@@ -439,7 +439,7 @@ Step 3 (정제기): 통과된 엄밀한 팩트만으로 최종 보고서를 재�
         {
           role: 'assistant',
           content: fallbackReply,
-          source: 'AI 마스터 선생님 엔진 (오프라인 대체)',
+          source: '오프라인 규칙형 학습 가이드 (AI 응답 아님)',
           timestamp: new Date().toLocaleTimeString(),
         },
       ]);

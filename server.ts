@@ -27,9 +27,18 @@ app.get('/api/health', (_req: Request, res: Response) => {
 // AI Coach endpoint (PRD Section 7)
 app.post('/api/coach', async (req: Request, res: Response) => {
   try {
-    const { mode, message, lessonContext, history } = req.body;
+    const { mode, message, lessonContext, history } = req.body || {};
+    // A public, unauthenticated LLM proxy can incur unexpected token charges.
+    // Do not expose this endpoint publicly without a separate auth/rate-limit gateway.
+    if (isProduction && process.env.ENABLE_PUBLIC_COACH !== 'true') {
+      res.status(503).json({ success: false, fallback: true, error: 'Hosted AI coach is disabled. Use the offline tutor.' });
+      return;
+    }
 
-    if (!message || typeof message !== 'string') {
+    if (typeof message !== 'string' || !message.trim() || message.length > 4000 ||
+        (history !== undefined && (!Array.isArray(history) || history.length > 8 ||
+        history.some((h: any) => !h || !['user', 'assistant'].includes(h.role) ||
+          typeof h.content !== 'string' || h.content.length > 4000)))) {
       res.status(400).json({ error: 'Message is required' });
       return;
     }
@@ -105,7 +114,7 @@ Current Lesson Context: ${lessonContext ? JSON.stringify(lessonContext) : 'None'
     res.status(500).json({
       success: false,
       fallback: true,
-      error: error?.message || 'Error communicating with Gemini service. Falling back to offline guide.',
+      error: 'AI coach is unavailable. Using the offline guide.',
     });
   }
 });

@@ -96,3 +96,19 @@ npm run build
 
 - **Synthetic Data Notice**: Use only synthetic test data. Never enter live company financial statements, private employee names, or tenant credentials.
 - **Client Storage**: All learning history and notes reside in browser IndexedDB on the device. Export JSON backups periodically via Settings.
+
+## Deployment and offline behavior (GitHub Pages)
+
+A GitHub Actions workflow in `.github/workflows/pages.yml` checks TypeScript, regression tests and the PWA production bundle before publishing `main`. **One-time admin setup:** under **Settings → Pages → Build and deployment**, select **GitHub Actions** as the publishing source. Once a deployment succeeds, verify `https://maincora44-wq.github.io/Ai-learning-tool-lucat/` on an Android device.
+
+GitHub Pages hosts **static content only**. Bundled lessons, quizzes, labs, local IndexedDB records, and the deterministic offline learning guide work without a paid service. The **Gemini AI coach requires a separately deployed, access-controlled Express backend**. The production server disables public coach requests by default; enabling it without authentication and rate limits can cause unexpected API charges. Do not place any Gemini API key in frontend Vite variables or in the public repository.
+
+The service worker and generated manifest are emitted by `vite-plugin-pwa` on production builds, not in `vite dev`. Preloaded lessons remain available offline once caching completes; live AI does not. Device/browser storage is not cloud sync. Export JSON backups from Settings before moving to a new device or clearing site data.
+
+Release verification:
+```bash
+bun install --frozen-lockfile
+bun run lint
+bun run test
+GITHUB_PAGES=true bun run build
+```
