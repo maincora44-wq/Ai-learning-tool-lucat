@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { validateBackupPayload } from '../storage/backupValidation';
 import {
   UserPreferences,
   LessonAttempt,
@@ -302,9 +303,7 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [preferences, attempts, quizAttempts, labSubmissions, evidenceRecords, sessionLogs, userNotes]);
 
   const importData = useCallback(async (payload: ExportDataPayload, mode: 'merge' | 'replace'): Promise<{ count: number }> => {
-    if (!payload || payload.schemaVersion !== '1.0') {
-      throw new Error('Unsupported schema version or invalid backup payload');
-    }
+    validateBackupPayload(payload);
 
     if (mode === 'replace') {
       setPreferences(payload.preferences || DEFAULT_PREFERENCES);
@@ -327,6 +326,12 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } else {
       // Merge mode
       const mergedAttempts = { ...attempts, ...(payload.attempts || {}) };
+      const mergedQuizAttempts = { ...quizAttempts };
+      for (const [lessonId, entries] of Object.entries(payload.quizAttempts)) {
+        const byId = new Map((mergedQuizAttempts[lessonId] || []).map(entry => [entry.id, entry]));
+        entries.forEach(entry => byId.set(entry.id, entry));
+        mergedQuizAttempts[lessonId] = Array.from(byId.values());
+      }
       const mergedLabs = { ...labSubmissions, ...(payload.labSubmissions || {}) };
       const mergedNotes = { ...userNotes, ...(payload.userNotes || {}) };
       
@@ -341,12 +346,14 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const mergedSessions = Array.from(sessionMap.values());
 
       setAttempts(mergedAttempts);
+      setQuizAttempts(mergedQuizAttempts);
       setLabSubmissions(mergedLabs);
       setUserNotes(mergedNotes);
       setEvidenceRecords(mergedEvidence);
       setSessionLogs(mergedSessions);
 
       await persistAttempts(mergedAttempts);
+      await persistQuizAttempts(mergedQuizAttempts);
       await persistLabSubmissions(mergedLabs);
       await persistUserNotes(mergedNotes);
       await persistEvidenceRecords(mergedEvidence);
@@ -354,7 +361,7 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       return { count: (payload.evidenceRecords || []).length + (payload.sessionLogs || []).length };
     }
-  }, [attempts, labSubmissions, userNotes, evidenceRecords, sessionLogs]);
+  }, [attempts, quizAttempts, labSubmissions, userNotes, evidenceRecords, sessionLogs]);
 
   const resetData = useCallback(async () => {
     await clearAllLocalData();
