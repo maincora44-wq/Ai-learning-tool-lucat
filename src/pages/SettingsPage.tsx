@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLearningState } from '../hooks/useLearningState';
 import { ExportDataPayload } from '../domain/types';
+import { validateBackupPayload } from '../storage/backupValidation';
 
 export const SettingsPage: React.FC = () => {
   const { preferences, updatePreferences, exportData, importData, resetData } = useLearningState();
@@ -40,9 +41,7 @@ export const SettingsPage: React.FC = () => {
         throw new Error('유효한 JSON 백업 파일 내용을 붙여넣어 주십시오.');
       }
       const parsed = JSON.parse(importJsonText);
-      if (!parsed.schemaVersion || parsed.schemaVersion !== '1.0') {
-        throw new Error('지원되지 않는 스키마 버전입니다. (버전 1.0만 가능)');
-      }
+      validateBackupPayload(parsed);
       setParsedPayload(parsed);
       setShowImportPreview(true);
     } catch (e: any) {
