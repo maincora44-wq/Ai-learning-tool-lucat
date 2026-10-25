@@ -145,4 +145,28 @@ assert(run2.result.duplicateRunsSuppressed > 0, 'Second run must suppress duplic
 assert(run2.result.notificationsSent === 0, 'Second run must send zero duplicate notifications');
 console.log('✓ runMonthEndAutomationSimulation idempotency tests passed!');
 
-console.log('\nAll 4 test suites passed successfully! Verification Complete.');
+
+// 5. Test malformed backup rejection (must run before overwriting saved data)
+console.log('Test 5: validating import backups...');
+const { validateBackupPayload } = await import('../storage/backupValidation');
+const validBackup = {
+  schemaVersion: '1.0',
+  exportedAt: '2026-10-25T00:00:00.000Z',
+  preferences: { language: 'EN_KO', focus: 'BOTH', dailyGoalMin: 20 },
+  attempts: {}, quizAttempts: {}, labSubmissions: {},
+  evidenceRecords: [], sessionLogs: [], userNotes: {},
+};
+validateBackupPayload(validBackup);
+for (const bad of [
+  { ...validBackup, quizAttempts: [] },
+  { ...validBackup, attempts: { T01: { id: 3 } } },
+  { ...validBackup, userNotes: { T01: { injected: true } } },
+  { ...validBackup, evidenceRecords: [{ id: 1 }] },
+]) {
+  let rejected = false;
+  try { validateBackupPayload(bad); } catch { rejected = true; }
+  assert(rejected, 'Malformed backup must be rejected before import');
+}
+console.log('✓ backup payload validation tests passed!');
+
+console.log('\nAll 5 test suites passed successfully! Verification Complete.');
