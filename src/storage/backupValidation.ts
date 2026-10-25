@@ -22,19 +22,19 @@ export function validateBackupPayload(value: unknown): asserts value is ExportDa
       typeof value.preferences.dailyGoalMin !== 'number') {
     throw new Error('백업 환경설정이 손상되었습니다.');
   }
-  for (const note of Object.values(value.userNotes)) {
+  for (const note of Object.values(value.userNotes as Record<string, unknown>)) {
     if (typeof note !== 'string') throw new Error('백업 노트는 문자열이어야 합니다.');
   }
-  for (const entry of Object.values(value.attempts)) {
+  for (const entry of Object.values(value.attempts as Record<string, unknown>)) {
     if (!isRecord(entry) || !hasString(entry, 'id') || !hasString(entry, 'lessonId') ||
         !hasString(entry, 'startedAt')) throw new Error('레슨 학습 기록이 손상되었습니다.');
   }
-  for (const list of Object.values(value.quizAttempts)) {
+  for (const list of Object.values(value.quizAttempts as Record<string, unknown>)) {
     if (!Array.isArray(list) || list.some(q => !isRecord(q) || !hasString(q, 'id') ||
         !hasString(q, 'lessonId') || typeof q.score !== 'number' ||
         !isRecord(q.selectedAnswers))) throw new Error('퀴즈 기록이 손상되었습니다.');
   }
-  for (const entry of Object.values(value.labSubmissions)) {
+  for (const entry of Object.values(value.labSubmissions as Record<string, unknown>)) {
     if (!isRecord(entry) || !hasString(entry, 'id') || !hasString(entry, 'labId')) {
       throw new Error('실습 기록이 손상되었습니다.');
     }
